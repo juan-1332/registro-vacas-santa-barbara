@@ -1,2 +1,1 @@
-para usarla `index.html` en un navegador moderno.
-Los datos se guardan en `localStorage` del navegador.
+Este proyecto se hizo con el fin de automatizar los trabajos de los pequeños,medianos y grandes hatos, en el cual se registra el animal y se automatiza la catalogación de el estado de la cabeza de ganado
