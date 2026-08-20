@@ -13,8 +13,8 @@
     <section class="card">
       <h2>Registrar Vaca</h2>
       <form id="form-registro">
-        <label>Nombre:
-          <input type="text" id="nombre" placeholder="Opcional">
+        <label>Código:
+          <input type="text" id="codigo" placeholder="Ej: C123 (opcional)">
         </label>
         <label>Fecha de nacimiento:
           <input type="date" id="fechaNacimiento" required>
@@ -41,9 +41,15 @@
         <label>Peso mínimo ideal (kg):
           <input type="number" id="rangoMin" step="0.1" min="0" required>
         </label>
-        <label>Peso máximo ideal (kg):
-          <input type="number" id="rangoMax" step="0.1" min="0" required>
-        </label>
+          <label>Peso máximo ideal (kg):
+            <input type="number" id="rangoMax" step="0.1" min="0" required>
+          </label>
+          <label>Edad mínima (años):
+            <input type="number" id="rangoEdadMin" step="1" min="0" value="0" required>
+          </label>
+          <label>Edad máxima (años):
+            <input type="number" id="rangoEdadMax" step="1" min="0" value="999" required>
+          </label>
         <div class="actions">
           <button type="submit">Agregar/Actualizar Raza</button>
         </div>

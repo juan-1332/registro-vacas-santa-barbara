@@ -10,7 +10,7 @@
 
   // Elementos
   const formRegistro = document.getElementById('form-registro');
-  const nombreInput = document.getElementById('nombre');
+  const codigoInput = document.getElementById('codigo');
   const fechaInput = document.getElementById('fechaNacimiento');
   const pesoInput = document.getElementById('peso');
   const razaSelect = document.getElementById('razaSelect');
@@ -20,6 +20,8 @@
   const razaNombre = document.getElementById('razaNombre');
   const rangoMin = document.getElementById('rangoMin');
   const rangoMax = document.getElementById('rangoMax');
+  const rangoEdadMin = document.getElementById('rangoEdadMin');
+  const rangoEdadMax = document.getElementById('rangoEdadMax');
   const razasList = document.getElementById('razasList');
 
   const vacasList = document.getElementById('vacasList');
@@ -32,21 +34,61 @@
       vacas = JSON.parse(rawVacas);
       if(vacas.length) nextId = Math.max(...vacas.map(v=>v.id))+1;
     }
-    if(rawRazas){ razas = JSON.parse(rawRazas); }
+    if(rawRazas){
+      const parsed = JSON.parse(rawRazas);
+      // migrar formato antiguo (objeto con min/max) a array de rangos con edades 0-999
+      if(parsed && typeof parsed === 'object' && !Array.isArray(parsed)){
+        const migrated = {};
+        Object.keys(parsed).forEach(k=>{
+          const v = parsed[k];
+          if(v && typeof v.min !== 'undefined' && typeof v.max !== 'undefined'){
+            migrated[k] = [{ageMin:0, ageMax:999, min: Number(v.min), max: Number(v.max)}];
+          } else {
+            migrated[k] = v;
+          }
+        });
+        razas = migrated;
+      } else {
+        razas = parsed;
+      }
+    }
     // si no hay razas, crear una por defecto
-    if(Object.keys(razas).length===0){
+    if(!razas || Object.keys(razas).length===0){
       razas = {
-        'General': {min:200, max:600}
+        'General': [{ageMin:0, ageMax:999, min:200, max:600}]
       };
       saveRazas();
     }
+
+    // migrar vacas antiguas que tengan 'nombre' en lugar de 'codigo'
+    if(vacas && vacas.length){
+      let changed = false;
+      vacas.forEach(v=>{ if(!v.codigo && v.nombre){ v.codigo = v.nombre; delete v.nombre; changed = true; } });
+      if(changed) saveVacas();
+    }
   }
+
 
   function saveVacas(){ localStorage.setItem(LS_VACAS, JSON.stringify(vacas)); }
   function saveRazas(){ localStorage.setItem(LS_RAZAS, JSON.stringify(razas)); }
 
-  function addOrUpdateRaza(nombre, min, max){
-    razas[nombre] = {min: Number(min), max: Number(max)};
+  function addOrUpdateRaza(nombre, ageMin, ageMax, min, max, editIndex){
+    if(!razas[nombre]) razas[nombre] = [];
+    const range = {ageMin: Number(ageMin), ageMax: Number(ageMax), min: Number(min), max: Number(max)};
+    if(typeof editIndex === 'number' && !Number.isNaN(editIndex)){
+      razas[nombre][editIndex] = range;
+    } else {
+      razas[nombre].push(range);
+    }
+    saveRazas();
+    renderRazas();
+    populateRazaSelect();
+  }
+
+  function removeRango(nombre, index){
+    if(!razas[nombre]) return;
+    razas[nombre].splice(index,1);
+    if(razas[nombre].length===0) delete razas[nombre];
     saveRazas();
     renderRazas();
     populateRazaSelect();
@@ -59,10 +101,10 @@
     populateRazaSelect();
   }
 
-  function registerVaca(nom, fecha, peso, raza){
+  function registerVaca(codigo, fecha, peso, raza){
     const vaca = {
       id: nextId++,
-      nombre: nom || '',
+      codigo: codigo || '',
       fechaNacimiento: fecha,
       peso: Number(peso),
       raza: raza,
@@ -81,11 +123,28 @@
     renderVacas();
   }
 
-  function clasificar(peso, raza){
-    const r = razas[raza];
-    if(!r) return 'Sin rango';
-    if(peso < r.min) return 'Bajo peso';
-    if(peso > r.max) return 'Sobrepeso';
+  function edadEnAnios(fechaStr){
+    if(!fechaStr) return 0;
+    const nacido = new Date(fechaStr);
+    const ahora = new Date();
+    const diff = ahora - nacido;
+    const years = diff / (1000*60*60*24*365.25);
+    return Math.floor(years);
+  }
+
+  function clasificar(peso, raza, edadYears){
+    const ranges = razas[raza];
+    if(!ranges || ranges.length===0) return 'Sin rango';
+    // buscar el rango de edad que corresponda
+    const r = ranges.find(rr => edadYears >= rr.ageMin && edadYears <= rr.ageMax);
+    // si no hay rango por edad, intentar 'General'
+    let target = r;
+    if(!target && razas['General'] && razas['General'].length>0){
+      target = razas['General'][0];
+    }
+    if(!target) return 'Sin rango';
+    if(peso < target.min) return 'Bajo peso';
+    if(peso > target.max) return 'Sobrepeso';
     return 'Peso promedio';
   }
 
@@ -103,15 +162,21 @@
     if(keys.length===0){ razasList.innerHTML = '<small>No hay razas definidas.</small>'; return; }
     const table = document.createElement('table');
     const thead = document.createElement('thead');
-    thead.innerHTML = '<tr><th>Raza</th><th>Min (kg)</th><th>Max (kg)</th><th>Acciones</th></tr>';
+    thead.innerHTML = '<tr><th>Raza</th><th>Edad (años)</th><th>Min (kg)</th><th>Max (kg)</th><th>Acciones</th></tr>';
     table.appendChild(thead);
     const tbody = document.createElement('tbody');
     keys.forEach(r=>{
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${r}</td><td>${razas[r].min}</td><td>${razas[r].max}</td><td>`+
-        `<button data-raza="${r}" class="edit-raza">Editar</button> `+
-        `<button data-raza="${r}" class="del-raza">Eliminar</button></td>`;
-      tbody.appendChild(tr);
+      const ranges = razas[r];
+      ranges.forEach((rg, idx)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${r}</td><td>${rg.ageMin} - ${rg.ageMax}</td><td>${rg.min}</td><td>${rg.max}</td><td>`+
+          `<button data-raza="${r}" data-idx="${idx}" class="edit-raza">Editar</button> `+
+          `<button data-raza="${r}" data-idx="${idx}" class="del-rango">Eliminar rango</button></td>`;
+        tbody.appendChild(tr);
+      });
+      const trAll = document.createElement('tr');
+      trAll.innerHTML = `<td colspan="5"><button data-raza="${r}" class="del-raza">Eliminar raza ${r} (todas rangos)</button></td>`;
+      tbody.appendChild(trAll);
     });
     table.appendChild(tbody);
     razasList.innerHTML = '';
@@ -121,15 +186,28 @@
     [...razasList.querySelectorAll('.edit-raza')].forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const r = btn.getAttribute('data-raza');
+        const idx = Number(btn.getAttribute('data-idx'));
+        const rg = razas[r][idx];
         razaNombre.value = r;
-        rangoMin.value = razas[r].min;
-        rangoMax.value = razas[r].max;
+        rangoMin.value = rg.min;
+        rangoMax.value = rg.max;
+        rangoEdadMin.value = rg.ageMin;
+        rangoEdadMax.value = rg.ageMax;
+        formRaza.dataset.editRaza = r;
+        formRaza.dataset.editIndex = String(idx);
+      });
+    });
+    [...razasList.querySelectorAll('.del-rango')].forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const r = btn.getAttribute('data-raza');
+        const idx = Number(btn.getAttribute('data-idx'));
+        if(confirm(`Eliminar rango de edad ${r}?`)) removeRango(r, idx);
       });
     });
     [...razasList.querySelectorAll('.del-raza')].forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const r = btn.getAttribute('data-raza');
-        if(confirm(`Eliminar la raza "${r}"? Esto no eliminará vacas existentes.`)){
+        if(confirm(`Eliminar la raza "${r}" y todos sus rangos? Esto no eliminará vacas existentes.`)){
           removeRaza(r);
         }
       });
@@ -139,18 +217,20 @@
   function renderVacas(){
     if(vacas.length===0){ vacasList.innerHTML = '<small>No hay vacas registradas.</small>'; return; }
     const table = document.createElement('table');
-    table.innerHTML = '<thead><tr><th>ID</th><th>Nombre</th><th>Raza</th><th>Fecha Nac</th><th>Peso (kg)</th><th>Clasificación</th><th>Acciones</th></tr></thead>';
+    table.innerHTML = '<thead><tr><th>ID</th><th>Código</th><th>Raza</th><th>Fecha Nac</th><th>Peso (kg)</th><th>Edad</th><th>Clasificación</th><th>Acciones</th></tr></thead>';
     const tbody = document.createElement('tbody');
     vacas.forEach(v=>{
-      const cls = clasificar(v.peso, v.raza);
+      const edad = edadEnAnios(v.fechaNacimiento);
+      const cls = clasificar(v.peso, v.raza, edad);
       const clsClass = cls==='Bajo peso'? 'status-bajo' : (cls==='Peso promedio'? 'status-prom' : (cls==='Sobrepeso'? 'status-sobre' : ''));
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${v.id}</td>
-        <td>${v.nombre}</td>
+        <td>${v.codigo || ''}</td>
         <td>${v.raza}</td>
         <td>${v.fechaNacimiento}</td>
         <td data-id="peso-${v.id}">${v.peso.toFixed(1)}</td>
+        <td>${edad} años</td>
         <td class="${clsClass}">${cls}</td>
         <td>
           <button data-id="${v.id}" class="editar-peso">Editar peso</button>
@@ -192,12 +272,12 @@
   // Eventos
   formRegistro.addEventListener('submit', (e)=>{
     e.preventDefault();
-    const nom = nombreInput.value.trim();
+    const codigo = codigoInput.value.trim();
     const fecha = fechaInput.value;
     const peso = pesoInput.value;
     const raza = razaSelect.value;
     if(!fecha || !peso || !raza){ alert('Complete los campos requeridos'); return; }
-    registerVaca(nom, fecha, peso, raza);
+    registerVaca(codigo, fecha, peso, raza);
     formRegistro.reset();
   });
 
@@ -208,9 +288,17 @@
     const nombre = razaNombre.value.trim();
     const min = rangoMin.value;
     const max = rangoMax.value;
-    if(!nombre || min==='' || max===''){ alert('Complete los campos de raza'); return; }
+    const ageMin = rangoEdadMin.value;
+    const ageMax = rangoEdadMax.value;
+    if(!nombre || min==='' || max==='' || ageMin==='' || ageMax===''){ alert('Complete los campos de raza'); return; }
     if(Number(min) > Number(max)){ alert('El mínimo no puede ser mayor que el máximo'); return; }
-    addOrUpdateRaza(nombre, min, max);
+    if(Number(ageMin) > Number(ageMax)){ alert('La edad mínima no puede ser mayor que la máxima'); return; }
+    const editRaza = formRaza.dataset.editRaza;
+    const editIndex = formRaza.dataset.editIndex ? Number(formRaza.dataset.editIndex) : undefined;
+    addOrUpdateRaza(nombre, ageMin, ageMax, min, max, editIndex);
+    // clear edit flags
+    delete formRaza.dataset.editRaza;
+    delete formRaza.dataset.editIndex;
     formRaza.reset();
   });
 
