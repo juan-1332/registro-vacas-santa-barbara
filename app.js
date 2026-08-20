@@ -76,8 +76,14 @@
     if(!razas[nombre]) razas[nombre] = [];
     const range = {ageMin: Number(ageMin), ageMax: Number(ageMax), min: Number(min), max: Number(max)};
     if(typeof editIndex === 'number' && !Number.isNaN(editIndex)){
+      // edit existing range
       razas[nombre][editIndex] = range;
     } else {
+      // enforce maximum of 3 ranges per raza
+      if(razas[nombre].length >= 3){
+        alert('Ya hay 3 rangos para la raza "' + nombre + '". Puedes editar uno existente o eliminar uno para agregar otro.');
+        return;
+      }
       razas[nombre].push(range);
     }
     saveRazas();
@@ -167,6 +173,10 @@
     const tbody = document.createElement('tbody');
     keys.forEach(r=>{
       const ranges = razas[r];
+      // show count indicator row for this raza
+      const countTr = document.createElement('tr');
+      countTr.innerHTML = `<td colspan="5"><small>Raza: ${r} — Rangos: ${ranges.length}/3</small></td>`;
+      tbody.appendChild(countTr);
       ranges.forEach((rg, idx)=>{
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${r}</td><td>${rg.ageMin} - ${rg.ageMax}</td><td>${rg.min}</td><td>${rg.max}</td><td>`+
@@ -277,6 +287,11 @@
     const peso = pesoInput.value;
     const raza = razaSelect.value;
     if(!fecha || !peso || !raza){ alert('Complete los campos requeridos'); return; }
+    // la raza debe tener exactamente 3 rangos para permitir registro
+    if(!razas[raza] || razas[raza].length !== 3){
+      alert('La raza seleccionada debe tener exactamente 3 rangos de edad antes de registrar vacas. Actualmente tiene ' + (razas[raza]? razas[raza].length : 0) + '.');
+      return;
+    }
     registerVaca(codigo, fecha, peso, raza);
     formRegistro.reset();
   });
