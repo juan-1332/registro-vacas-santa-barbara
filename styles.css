@@ -1,0 +1,14 @@
+*{box-sizing:border-box;font-family:Segoe UI, Roboto, Arial, sans-serif}
+body{background:#f4f6f8;color:#222;padding:20px}
+main{max-width:900px;margin:0 auto}
+.card{background:#fff;border-radius:8px;padding:16px;margin:12px 0;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+label{display:block;margin:8px 0}
+input, select{padding:8px;width:100%;max-width:360px}
+.actions{margin-top:10px}
+button{padding:8px 12px;margin-right:8px}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th,td{padding:8px;border-bottom:1px solid #e6e9ec;text-align:left}
+small{color:#666}
+.status-bajo{color:#b22222}
+.status-prom{color:#2e8b57}
+.status-sobre{color:#ff8c00}

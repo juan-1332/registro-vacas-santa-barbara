@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Registro de Vacas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>Registro de Vacas</h1>
+
+    <section class="card">
+      <h2>Registrar Vaca</h2>
+      <form id="form-registro">
+        <label>Nombre:
+          <input type="text" id="nombre" placeholder="Opcional">
+        </label>
+        <label>Fecha de nacimiento:
+          <input type="date" id="fechaNacimiento" required>
+        </label>
+        <label>Peso (kg):
+          <input type="number" id="peso" step="0.1" min="0" required>
+        </label>
+        <label>Raza:
+          <select id="razaSelect"></select>
+        </label>
+        <div class="actions">
+          <button type="submit">Registrar</button>
+          <button type="button" id="btn-reset">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Razas y Rangos de Peso</h2>
+      <form id="form-raza">
+        <label>Raza:
+          <input type="text" id="razaNombre" required placeholder="Ej: Holstein">
+        </label>
+        <label>Peso mínimo ideal (kg):
+          <input type="number" id="rangoMin" step="0.1" min="0" required>
+        </label>
+        <label>Peso máximo ideal (kg):
+          <input type="number" id="rangoMax" step="0.1" min="0" required>
+        </label>
+        <div class="actions">
+          <button type="submit">Agregar/Actualizar Raza</button>
+        </div>
+      </form>
+
+      <div id="razasList"></div>
+    </section>
+
+    <section class="card">
+      <h2>Vacas Registradas</h2>
+      <div id="vacasList"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
