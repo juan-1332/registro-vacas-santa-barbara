@@ -50,11 +50,11 @@
         <h3 id="editorTitle">Editor de Raza</h3>
         <div id="editorRanges"></div>
         <form id="editorForm">
-          <label>Edad mínima (años):
-            <input type="number" id="e_ageMin" step="1" min="0" value="0" required>
+          <label>Edad mínima (años, decimales permitidos, p. ej. 1.5 = 1 año 6 meses):
+            <input type="number" id="e_ageMin" step="0.1" min="0" value="0" required>
           </label>
-          <label>Edad máxima (años):
-            <input type="number" id="e_ageMax" step="1" min="0" value="999" required>
+          <label>Edad máxima (años, decimales permitidos):
+            <input type="number" id="e_ageMax" step="0.1" min="0" value="999" required>
           </label>
           <label>Peso mínimo (kg):
             <input type="number" id="e_min" step="0.1" min="0" required>

@@ -225,19 +225,30 @@
   }
 
   function edadEnAnios(fechaStr){
-    if(!fechaStr) return 0;
+    if(!fechaStr) return {years:0, months:0, totalMonths:0};
     const nacido = new Date(fechaStr);
     const ahora = new Date();
-    const diff = ahora - nacido;
-    const years = diff / (1000*60*60*24*365.25);
-    return Math.floor(years);
+    // calcular meses completos entre fechas usando año/mes/día
+    let years = ahora.getFullYear() - nacido.getFullYear();
+    let months = ahora.getMonth() - nacido.getMonth();
+    let days = ahora.getDate() - nacido.getDate();
+    if(days < 0){ months -= 1; }
+    if(months < 0){ years -= 1; months += 12; }
+    const totalMonths = years*12 + months;
+    return {years: years, months: months, totalMonths: totalMonths};
   }
 
-  function clasificar(peso, raza, edadYears){
+  function clasificar(peso, raza, edad){
+    // edad: {years, months, totalMonths}
     const ranges = razas[raza];
     if(!ranges || ranges.length===0) return 'Sin rango';
-    // buscar el rango de edad que corresponda
-    const r = ranges.find(rr => edadYears >= rr.ageMin && edadYears <= rr.ageMax);
+    const ageMonths = edad.totalMonths;
+    // buscar el rango de edad que corresponda (rangos guardados en años, pueden ser decimales)
+    const r = ranges.find(rr => {
+      const minM = Math.round(rr.ageMin * 12);
+      const maxM = Math.round(rr.ageMax * 12);
+      return ageMonths >= minM && ageMonths <= maxM;
+    });
     // si no hay rango por edad, intentar 'General'
     let target = r;
     if(!target && razas['General'] && razas['General'].length>0){
@@ -274,7 +285,9 @@
       tbody.appendChild(countTr);
       ranges.forEach((rg, idx)=>{
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${r}</td><td>${rg.ageMin} - ${rg.ageMax}</td><td>${rg.min}</td><td>${rg.max}</td><td>`+
+        const minMonths = Math.round(rg.ageMin*12);
+        const maxMonths = Math.round(rg.ageMax*12);
+        tr.innerHTML = `<td>${r}</td><td>${rg.ageMin} - ${rg.ageMax} años (${minMonths}-${maxMonths} meses)</td><td>${rg.min}</td><td>${rg.max}</td><td>`+
           `<button data-raza="${r}" data-idx="${idx}" class="del-rango">Eliminar rango</button></td>`;
         tbody.appendChild(tr);
       });
@@ -326,7 +339,7 @@
         <td>${v.raza}</td>
         <td>${v.fechaNacimiento}</td>
         <td data-id="peso-${v.id}">${v.peso.toFixed(1)}</td>
-        <td>${edad} años</td>
+        <td>${edad.years} años ${edad.months} meses</td>
         <td class="${clsClass}">${cls}</td>
         <td>
           <button data-id="${v.id}" class="editar-peso">Editar peso</button>
