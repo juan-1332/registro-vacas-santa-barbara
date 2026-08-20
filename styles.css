@@ -6,6 +6,7 @@ label{display:block;margin:8px 0}
 input, select{padding:8px;width:100%;max-width:360px}
 .actions{margin-top:10px}
 button{padding:8px 12px;margin-right:8px}
+.hidden{display:none}
 table{width:100%;border-collapse:collapse;margin-top:8px}
 th,td{padding:8px;border-bottom:1px solid #e6e9ec;text-align:left}
 small{color:#666}

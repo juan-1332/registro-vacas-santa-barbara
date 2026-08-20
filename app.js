@@ -18,11 +18,19 @@
 
   const formRaza = document.getElementById('form-raza');
   const razaNombre = document.getElementById('razaNombre');
-  const rangoMin = document.getElementById('rangoMin');
-  const rangoMax = document.getElementById('rangoMax');
-  const rangoEdadMin = document.getElementById('rangoEdadMin');
-  const rangoEdadMax = document.getElementById('rangoEdadMax');
   const razasList = document.getElementById('razasList');
+  const razaEditor = document.getElementById('razaEditor');
+  const editorTitle = document.getElementById('editorTitle');
+  const editorRanges = document.getElementById('editorRanges');
+  const editorForm = document.getElementById('editorForm');
+  const e_ageMin = document.getElementById('e_ageMin');
+  const e_ageMax = document.getElementById('e_ageMax');
+  const e_min = document.getElementById('e_min');
+  const e_max = document.getElementById('e_max');
+  const btnBack = document.getElementById('btnBack');
+
+  let currentEditingRaza = null;
+  let currentEditIndex = null;
 
   const vacasList = document.getElementById('vacasList');
 
@@ -67,6 +75,93 @@
       if(changed) saveVacas();
     }
   }
+
+  // Raza editor
+  function openRazaEditor(nombre){
+    if(!razas[nombre]) return alert('Raza no encontrada');
+    currentEditingRaza = nombre;
+    currentEditIndex = null;
+    editorTitle.textContent = `Editor - ${nombre}`;
+    razaEditor.classList.remove('hidden');
+    renderRazaEditor();
+  }
+
+  function closeRazaEditor(){
+    currentEditingRaza = null;
+    currentEditIndex = null;
+    editorForm.reset();
+    razaEditor.classList.add('hidden');
+  }
+
+  function renderRazaEditor(){
+    if(!currentEditingRaza) return;
+    const ranges = razas[currentEditingRaza] || [];
+    if(ranges.length===0){
+      editorRanges.innerHTML = '<small>No hay rangos definidos. Añade hasta 3.</small>';
+    } else {
+      const table = document.createElement('table');
+      table.innerHTML = '<thead><tr><th>Edad</th><th>Min (kg)</th><th>Max (kg)</th><th>Acciones</th></tr></thead>';
+      const tb = document.createElement('tbody');
+      ranges.forEach((rg, idx)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${rg.ageMin} - ${rg.ageMax}</td><td>${rg.min}</td><td>${rg.max}</td><td>`+
+          `<button data-idx="${idx}" class="edit-range">Editar</button> `+
+          `<button data-idx="${idx}" class="del-range">Eliminar</button></td>`;
+        tb.appendChild(tr);
+      });
+      table.appendChild(tb);
+      editorRanges.innerHTML = '';
+      editorRanges.appendChild(table);
+
+      // listeners
+      [...editorRanges.querySelectorAll('.edit-range')].forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const idx = Number(btn.getAttribute('data-idx'));
+          const rg = razas[currentEditingRaza][idx];
+          e_ageMin.value = rg.ageMin;
+          e_ageMax.value = rg.ageMax;
+          e_min.value = rg.min;
+          e_max.value = rg.max;
+          currentEditIndex = idx;
+        });
+      });
+      [...editorRanges.querySelectorAll('.del-range')].forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const idx = Number(btn.getAttribute('data-idx'));
+          if(confirm('Eliminar rango?')){
+            removeRango(currentEditingRaza, idx);
+            renderRazaEditor();
+          }
+        });
+      });
+    }
+  }
+
+  editorForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    if(!currentEditingRaza) return alert('Seleccione una raza para editar');
+    const ageMin = e_ageMin.value;
+    const ageMax = e_ageMax.value;
+    const min = e_min.value;
+    const max = e_max.value;
+    if(ageMin === '' || ageMax === '' || min === '' || max === ''){ alert('Complete los campos'); return; }
+    if(Number(ageMin) > Number(ageMax)){ alert('Edad mínima no puede ser mayor que la máxima'); return; }
+    if(Number(min) > Number(max)){ alert('Peso mínimo no puede ser mayor que el máximo'); return; }
+    if(typeof currentEditIndex === 'number' && !Number.isNaN(currentEditIndex)){
+      // editar
+      razas[currentEditingRaza][currentEditIndex] = {ageMin: Number(ageMin), ageMax: Number(ageMax), min: Number(min), max: Number(max)};
+    } else {
+      if(razas[currentEditingRaza].length >= 3){ alert('Ya hay 3 rangos para esta raza'); return; }
+      razas[currentEditingRaza].push({ageMin: Number(ageMin), ageMax: Number(ageMax), min: Number(min), max: Number(max)});
+    }
+    saveRazas();
+    renderRazas();
+    renderRazaEditor();
+    editorForm.reset();
+    currentEditIndex = null;
+  });
+
+  btnBack.addEventListener('click', ()=>{ closeRazaEditor(); });
 
 
   function saveVacas(){ localStorage.setItem(LS_VACAS, JSON.stringify(vacas)); }
@@ -175,12 +270,11 @@
       const ranges = razas[r];
       // show count indicator row for this raza
       const countTr = document.createElement('tr');
-      countTr.innerHTML = `<td colspan="5"><small>Raza: ${r} — Rangos: ${ranges.length}/3</small></td>`;
+      countTr.innerHTML = `<td colspan="5"><small>Raza: ${r} — Rangos: ${ranges.length}/3</small> <button data-raza="${r}" class="entrar-raza">Entrar</button></td>`;
       tbody.appendChild(countTr);
       ranges.forEach((rg, idx)=>{
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${r}</td><td>${rg.ageMin} - ${rg.ageMax}</td><td>${rg.min}</td><td>${rg.max}</td><td>`+
-          `<button data-raza="${r}" data-idx="${idx}" class="edit-raza">Editar</button> `+
           `<button data-raza="${r}" data-idx="${idx}" class="del-rango">Eliminar rango</button></td>`;
         tbody.appendChild(tr);
       });
@@ -193,18 +287,10 @@
     razasList.appendChild(table);
 
     // listeners
-    [...razasList.querySelectorAll('.edit-raza')].forEach(btn=>{
+    [...razasList.querySelectorAll('.entrar-raza')].forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const r = btn.getAttribute('data-raza');
-        const idx = Number(btn.getAttribute('data-idx'));
-        const rg = razas[r][idx];
-        razaNombre.value = r;
-        rangoMin.value = rg.min;
-        rangoMax.value = rg.max;
-        rangoEdadMin.value = rg.ageMin;
-        rangoEdadMax.value = rg.ageMax;
-        formRaza.dataset.editRaza = r;
-        formRaza.dataset.editIndex = String(idx);
+        openRazaEditor(r);
       });
     });
     [...razasList.querySelectorAll('.del-rango')].forEach(btn=>{
@@ -301,19 +387,18 @@
   formRaza.addEventListener('submit', (e)=>{
     e.preventDefault();
     const nombre = razaNombre.value.trim();
-    const min = rangoMin.value;
-    const max = rangoMax.value;
-    const ageMin = rangoEdadMin.value;
-    const ageMax = rangoEdadMax.value;
-    if(!nombre || min==='' || max==='' || ageMin==='' || ageMax===''){ alert('Complete los campos de raza'); return; }
-    if(Number(min) > Number(max)){ alert('El mínimo no puede ser mayor que el máximo'); return; }
-    if(Number(ageMin) > Number(ageMax)){ alert('La edad mínima no puede ser mayor que la máxima'); return; }
-    const editRaza = formRaza.dataset.editRaza;
-    const editIndex = formRaza.dataset.editIndex ? Number(formRaza.dataset.editIndex) : undefined;
-    addOrUpdateRaza(nombre, ageMin, ageMax, min, max, editIndex);
-    // clear edit flags
-    delete formRaza.dataset.editRaza;
-    delete formRaza.dataset.editIndex;
+    if(!nombre){ alert('Indica el nombre de la raza'); return; }
+    if(razas[nombre]){
+      if(confirm('La raza ya existe. ¿Entrar al editor para gestionar sus rangos?')){
+        openRazaEditor(nombre);
+      }
+      return;
+    }
+    // crear raza vacía y abrir editor
+    razas[nombre] = [];
+    saveRazas();
+    renderRazas();
+    openRazaEditor(nombre);
     formRaza.reset();
   });
 

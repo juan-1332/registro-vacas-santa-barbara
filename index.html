@@ -33,30 +33,41 @@
     </section>
 
     <section class="card">
-      <h2>Razas y Rangos de Peso</h2>
+      <h2>Razas</h2>
       <form id="form-raza">
         <label>Raza:
           <input type="text" id="razaNombre" required placeholder="Ej: Holstein">
         </label>
-        <label>Peso mínimo ideal (kg):
-          <input type="number" id="rangoMin" step="0.1" min="0" required>
-        </label>
-          <label>Peso máximo ideal (kg):
-            <input type="number" id="rangoMax" step="0.1" min="0" required>
-          </label>
-          <label>Edad mínima (años):
-            <input type="number" id="rangoEdadMin" step="1" min="0" value="0" required>
-          </label>
-          <label>Edad máxima (años):
-            <input type="number" id="rangoEdadMax" step="1" min="0" value="999" required>
-          </label>
         <div class="actions">
-          <button type="submit">Agregar/Actualizar Raza</button>
+          <button type="submit">Crear Raza</button>
         </div>
       </form>
-      <small>Nota: cada raza debe tener exactamente 3 rangos de edad (agrega uno por uno).</small>
+      <small>Nota: crea la raza y luego pulsa "Entrar" para añadir hasta 3 rangos de edad.</small>
 
       <div id="razasList"></div>
+
+      <div id="razaEditor" class="hidden">
+        <h3 id="editorTitle">Editor de Raza</h3>
+        <div id="editorRanges"></div>
+        <form id="editorForm">
+          <label>Edad mínima (años):
+            <input type="number" id="e_ageMin" step="1" min="0" value="0" required>
+          </label>
+          <label>Edad máxima (años):
+            <input type="number" id="e_ageMax" step="1" min="0" value="999" required>
+          </label>
+          <label>Peso mínimo (kg):
+            <input type="number" id="e_min" step="0.1" min="0" required>
+          </label>
+          <label>Peso máximo (kg):
+            <input type="number" id="e_max" step="0.1" min="0" required>
+          </label>
+          <div class="actions">
+            <button type="submit" id="btnAddRange">Agregar/Guardar rango</button>
+            <button type="button" id="btnBack">Volver</button>
+          </div>
+        </form>
+      </div>
     </section>
 
     <section class="card">
