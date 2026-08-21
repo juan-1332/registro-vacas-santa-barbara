@@ -1,15 +1,211 @@
-*{box-sizing:border-box;font-family:Segoe UI, Roboto, Arial, sans-serif}
-body{background:#f4f6f8;color:#222;padding:20px}
-main{max-width:900px;margin:0 auto}
-.card{background:#fff;border-radius:8px;padding:16px;margin:12px 0;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
-label{display:block;margin:8px 0}
-input, select{padding:8px;width:100%;max-width:360px}
-.actions{margin-top:10px}
-button{padding:8px 12px;margin-right:8px}
-.hidden{display:none}
-table{width:100%;border-collapse:collapse;margin-top:8px}
-th,td{padding:8px;border-bottom:1px solid #e6e9ec;text-align:left}
-small{color:#666}
-.status-bajo{color:#b22222}
-.status-prom{color:#2e8b57}
-.status-sobre{color:#ff8c00}
+:root {
+  --primary: #2e7d32;
+  --primary-dark: #1b5e20;
+  --background: #f1f5f2;
+  --card: #ffffff;
+  --border: #dce5df;
+  --text: #263238;
+  --muted: #607d8b;
+  --danger: #c62828;
+  --warning: #ef6c00;
+  --info: #1976d2;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  background: var(--background);
+  color: var(--text);
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: var(--primary-dark);
+  text-align: center;
+  margin: 10px 0 28px;
+}
+
+h2,
+h3 {
+  color: var(--primary-dark);
+  margin-top: 0;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  margin: 16px 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  align-items: end;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  font-weight: 600;
+  color: #455a64;
+}
+
+input,
+select {
+  width: 100%;
+  max-width: none;
+  padding: 11px 12px;
+  border: 1px solid #b8c7bd;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  font-size: 15px;
+}
+
+input:focus,
+select:focus {
+  outline: 3px solid rgba(46, 125, 50, 0.18);
+  border-color: var(--primary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 0;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+#btn-reset,
+#btnBack {
+  background: #607d8b;
+}
+
+.entrar-raza,
+.editar-peso,
+.edit-range {
+  background: var(--info);
+}
+
+.del-rango,
+.del-raza,
+.del-range,
+.borrar-vaca {
+  background: var(--danger);
+}
+
+table {
+  width: 100%;
+  margin-top: 14px;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #fff;
+}
+
+th {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+th,
+td {
+  padding: 11px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background: #f3faf4;
+}
+
+td button {
+  padding: 7px 10px;
+  font-size: 13px;
+  margin: 3px;
+}
+
+small {
+  color: var(--muted);
+}
+
+.status-bajo {
+  color: var(--danger);
+  font-weight: bold;
+}
+
+.status-prom {
+  color: var(--primary-dark);
+  font-weight: bold;
+}
+
+.status-sobre {
+  color: var(--warning);
+  font-weight: bold;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  body {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  form {
+    grid-template-columns: 1fr;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+}
