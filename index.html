@@ -14,13 +14,13 @@
       <h2>Registrar Vaca</h2>
       <form id="form-registro">
         <label>Código:
-          <input type="text" id="codigo" placeholder="Ej: C123 (opcional)">
+          <input type="text" id="codigo" required maxlength="30">
         </label>
         <label>Fecha de nacimiento:
           <input type="date" id="fechaNacimiento" required>
         </label>
         <label>Peso (kg):
-          <input type="number" id="peso" step="0.1" min="0" required>
+          <input type="number" id="peso" step="0.1" min="0.1" required>
         </label>
         <label>Sexo:
           <select id="sexoSelect" required>
@@ -37,16 +37,19 @@
 
     <section class="card">
       <h2>Rangos Brahman</h2>
-      <p class="section-note">Valores oficiales por edad, sexo y peso según la tabla entregada.</p>
+        <p class="section-note">Valores oficiales por edad, sexo y peso.</p>
       <div id="razasList"></div>
     </section>
 
     <section class="card">
-      <h2>Vacas Registradas</h2>
+      <h2>Bovinos registrados</h2>
+      <label class="search-field">Buscar por código:
+        <input type="search" id="buscarCodigo" placeholder="Escribe el código del bovino">
+      </label>
       <div id="vacasList"></div>
     </section>
   </main>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

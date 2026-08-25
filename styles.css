@@ -23,16 +23,16 @@ body {
 
 main,
 body > div {
-  max-width: 1200px;
-  margin: auto;
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
 }
 
 h1 {
   padding: 22px;
   margin: 0 0 20px;
   color: var(--blanco);
-  text-align: center;
-  background: linear-gradient(135deg, var(--verde-oscuro), var(--verde));
+  overflow-x: hidden;
   border-radius: 16px;
   box-shadow: 0 5px 15px #0002;
 }
@@ -40,17 +40,175 @@ h1 {
 h2,
 h3 {
   color: var(--verde-oscuro);
+  overflow-wrap: anywhere;
   margin-top: 0;
 }
 
 section,
 .card {
+  overflow-wrap: anywhere;
+  vertical-align: top;
   min-width: 0;
   padding: 22px;
   margin: 18px 0;
   background: var(--blanco);
   border: 1px solid var(--borde);
   border-radius: 14px;
+
+  #razasList table,
+  #vacasList table {
+    table-layout: auto;
+  }
+
+  #razasList tbody,
+  #vacasList tbody,
+  #razasList tr,
+  #vacasList tr {
+    display: block;
+  }
+
+  #razasList tbody,
+  #vacasList tbody,
+  #razasList tr,
+  #vacasList tr {
+    display: block;
+  }
+
+  #razasList thead,
+  #vacasList thead {
+    display: none;
+  }
+
+  #razasList tr,
+  #vacasList tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+  }
+
+  #razasList td,
+  #vacasList td {
+    min-width: 0;
+    padding: 4px 0;
+    border: 0;
+    font-size: 13px;
+  }
+
+  #razasList td::before,
+  #vacasList td::before {
+    display: block;
+    margin-bottom: 2px;
+    color: #607d8b;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  #razasList td:nth-child(1)::before { content: "Competencia"; }
+  #razasList td:nth-child(2)::before { content: "Máximo"; }
+  #razasList td:nth-child(3)::before { content: "Promedio"; }
+  #razasList td:nth-child(4)::before { content: "Mínimo"; }
+  #vacasList td:nth-child(1)::before { content: "Código"; }
+  #vacasList td:nth-child(2)::before { content: "Raza"; }
+  #vacasList td:nth-child(3)::before { content: "Sexo"; }
+  #vacasList td:nth-child(4)::before { content: "Fecha nac."; }
+  #vacasList td:nth-child(5)::before { content: "Peso"; }
+  #vacasList td:nth-child(6)::before { content: "Edad"; }
+  #vacasList td:nth-child(7)::before { content: "Clasificación"; }
+  #vacasList td:nth-child(8)::before { content: "Acciones"; }
+
+  #vacasList td:nth-child(1),
+  #vacasList td:nth-child(8) {
+    grid-column: 1 / -1;
+  }
+
+  #vacasList td:nth-child(8) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-top: 1px solid var(--borde);
+  }
+
+  #vacasList td:nth-child(8)::before {
+    width: 100%;
+  }
+
+  #vacasList td button {
+    flex: 1 1 120px;
+    min-width: 0;
+  }
+
+  #razasList thead,
+  #vacasList thead {
+    display: none;
+  }
+
+  #razasList tr,
+  #vacasList tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+  }
+
+  #razasList td,
+  #vacasList td {
+    min-width: 0;
+    padding: 4px 0;
+    border: 0;
+    font-size: 13px;
+  }
+
+  #razasList td::before,
+  #vacasList td::before {
+    display: block;
+    margin-bottom: 2px;
+    color: #607d8b;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  #razasList td:nth-child(1)::before { content: "Competencia"; }
+  #razasList td:nth-child(2)::before { content: "Máximo"; }
+  #razasList td:nth-child(3)::before { content: "Promedio"; }
+  #razasList td:nth-child(4)::before { content: "Mínimo"; }
+  #vacasList td:nth-child(1)::before { content: "Código"; }
+  #vacasList td:nth-child(2)::before { content: "Raza"; }
+  #vacasList td:nth-child(3)::before { content: "Sexo"; }
+  #vacasList td:nth-child(4)::before { content: "Fecha nac."; }
+  #vacasList td:nth-child(5)::before { content: "Peso"; }
+  #vacasList td:nth-child(6)::before { content: "Edad"; }
+  #vacasList td:nth-child(7)::before { content: "Clasificación"; }
+  #vacasList td:nth-child(8)::before { content: "Acciones"; }
+
+  #vacasList td:nth-child(1),
+  #vacasList td:nth-child(8) {
+    grid-column: 1 / -1;
+  }
+
+  #vacasList td:nth-child(8) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-top: 1px solid var(--borde);
+  }
+
+  #vacasList td:nth-child(8)::before {
+    width: 100%;
+  }
+
+  #vacasList td button {
+    flex: 1 1 120px;
+    min-width: 0;
+  }
   box-shadow: 0 4px 14px #0000000d;
 }
 
@@ -125,8 +283,9 @@ button:hover {
 }
 
 table {
-  width: max-content;
-  min-width: 100%;
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
   margin-top: 15px;
   border-collapse: collapse;
   background: white;
@@ -138,8 +297,12 @@ table {
 #editorRanges,
 #vacasList {
   max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+}
+
+.search-field {
+  max-width: 360px;
+  margin-bottom: 14px;
 }
 
 th {
@@ -147,11 +310,14 @@ th {
   background: var(--verde);
   color: white;
   text-align: left;
+  overflow-wrap: anywhere;
 }
 
 td {
   padding: 11px;
   border-bottom: 1px solid var(--borde);
+  overflow-wrap: anywhere;
+  vertical-align: top;
 }
 
 tbody tr:hover {
@@ -217,5 +383,17 @@ small {
   td,
   th {
     padding: 10px;
+  }
+
+  #razasList table,
+  #vacasList table {
+    font-size: 12px;
+  }
+
+  #razasList th,
+  #razasList td,
+  #vacasList th,
+  #vacasList td {
+    padding: 8px;
   }
 }
