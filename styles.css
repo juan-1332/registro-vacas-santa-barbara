@@ -1,52 +1,57 @@
 :root {
-  --primary: #2e7d32;
-  --primary-dark: #1b5e20;
-  --background: #f1f5f2;
-  --card: #ffffff;
-  --border: #dce5df;
-  --text: #263238;
-  --muted: #607d8b;
-  --danger: #c62828;
-  --warning: #ef6c00;
-  --info: #1976d2;
+  --verde: #2e7d32;
+  --verde-oscuro: #1b5e20;
+  --fondo: #f3f7f3;
+  --blanco: #fff;
+  --borde: #d8e3d8;
+  --texto: #263238;
+  --rojo: #c62828;
+  --azul: #1976d2;
 }
 
 * {
   box-sizing: border-box;
-  font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 body {
   margin: 0;
-  padding: 24px;
-  background: var(--background);
-  color: var(--text);
+  padding: 20px clamp(10px, 4vw, 48px);
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
-main {
+main,
+body > div {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: auto;
 }
 
 h1 {
-  color: var(--primary-dark);
+  padding: 22px;
+  margin: 0 0 20px;
+  color: var(--blanco);
   text-align: center;
-  margin: 10px 0 28px;
+  background: linear-gradient(135deg, var(--verde-oscuro), var(--verde));
+  border-radius: 16px;
+  box-shadow: 0 5px 15px #0002;
 }
 
 h2,
 h3 {
-  color: var(--primary-dark);
+  color: var(--verde-oscuro);
   margin-top: 0;
 }
 
+section,
 .card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  min-width: 0;
   padding: 22px;
-  margin: 16px 0;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  margin: 18px 0;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  box-shadow: 0 4px 14px #0000000d;
 }
 
 form {
@@ -56,54 +61,48 @@ form {
   align-items: end;
 }
 
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 label {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin: 0;
   font-weight: 600;
-  color: #455a64;
 }
 
 input,
 select {
   width: 100%;
-  max-width: none;
-  padding: 11px 12px;
-  border: 1px solid #b8c7bd;
+  padding: 11px;
+  border: 1px solid #b8c7b8;
   border-radius: 8px;
-  background: #fff;
-  color: var(--text);
+  background: white;
   font-size: 15px;
 }
 
 input:focus,
 select:focus {
-  outline: 3px solid rgba(46, 125, 50, 0.18);
-  border-color: var(--primary);
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
+  outline: 3px solid #2e7d3230;
+  border-color: var(--verde);
 }
 
 button {
+  padding: 11px 15px;
   border: 0;
   border-radius: 8px;
-  padding: 10px 14px;
-  margin: 0;
-  background: var(--primary);
-  color: #fff;
+  background: var(--verde);
+  color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: 0.2s;
 }
 
 button:hover {
-  background: var(--primary-dark);
+  background: var(--verde-oscuro);
   transform: translateY(-1px);
 }
 
@@ -115,97 +114,108 @@ button:hover {
 .entrar-raza,
 .editar-peso,
 .edit-range {
-  background: var(--info);
+  background: var(--azul);
 }
 
 .del-rango,
 .del-raza,
 .del-range,
 .borrar-vaca {
-  background: var(--danger);
+  background: var(--rojo);
 }
 
 table {
-  width: 100%;
-  margin-top: 14px;
+  width: max-content;
+  min-width: 100%;
+  margin-top: 15px;
   border-collapse: collapse;
+  background: white;
   overflow: hidden;
   border-radius: 10px;
-  background: #fff;
+}
+
+#razasList,
+#editorRanges,
+#vacasList {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 th {
-  background: var(--primary);
+  padding: 12px;
+  background: var(--verde);
   color: white;
-  font-weight: 600;
+  text-align: left;
 }
 
-th,
 td {
   padding: 11px;
-  border-bottom: 1px solid var(--border);
-  text-align: left;
-  vertical-align: middle;
+  border-bottom: 1px solid var(--borde);
 }
 
 tbody tr:hover {
-  background: #f3faf4;
+  background: #f1f8f1;
 }
 
 td button {
   padding: 7px 10px;
+  margin: 2px;
   font-size: 13px;
-  margin: 3px;
-}
-
-small {
-  color: var(--muted);
-}
-
-.status-bajo {
-  color: var(--danger);
-  font-weight: bold;
-}
-
-.status-prom {
-  color: var(--primary-dark);
-  font-weight: bold;
-}
-
-.status-sobre {
-  color: var(--warning);
-  font-weight: bold;
 }
 
 .hidden {
   display: none !important;
 }
 
+small {
+  color: #607d8b;
+}
+
 @media (max-width: 700px) {
   body {
-    padding: 12px;
+    padding: 10px 8px;
   }
 
+  section,
   .card {
-    padding: 16px;
-    border-radius: 10px;
+    padding: 15px;
   }
 
   form {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
+  form .actions {
+    grid-column: 1 / -1;
   }
 
-  .actions {
-    flex-direction: column;
+  h1 {
+    padding: 18px 12px;
+    font-size: 26px;
+  }
+
+  h2 {
+    font-size: 21px;
+  }
+
+  button {
+    min-height: 42px;
   }
 
   .actions button {
-    width: 100%;
+    flex: 1 1 140px;
+  }
+
+  input,
+  select {
+    min-width: 0;
+    padding: 10px 8px;
+  }
+
+  td,
+  th {
+    padding: 10px;
   }
 }
