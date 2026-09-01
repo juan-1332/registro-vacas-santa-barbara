@@ -3,17 +3,47 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Registro de Vacas</title>
+  <title>Santa Bárbara | Gestión ganadera</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main>
+  <section id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <p class="eyebrow">Santa Bárbara</p>
+      <h1>Gestión ganadera</h1>
+      <p class="auth-copy">Inicia sesión para consultar y administrar el inventario compartido.</p>
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="auth-tab active" data-auth-mode="login">Iniciar sesión</button>
+        <button type="button" class="auth-tab" data-auth-mode="register">Crear cuenta</button>
+      </div>
+      <form id="auth-form">
+        <label>Correo electrónico
+          <input type="email" id="auth-email" required autocomplete="email">
+        </label>
+        <label>Contraseña
+          <input type="password" id="auth-password" required minlength="6" autocomplete="current-password">
+        </label>
+        <button type="submit" id="auth-submit">Entrar</button>
+        <p id="auth-message" class="form-message" role="alert"></p>
+      </form>
+    </div>
+  </section>
+
+  <main class="hidden">
     <header class="topbar">
-      <h1>Registro de Vacas</h1>
+      <div>
+        <p class="eyebrow">Santa Bárbara</p>
+        <h1>Gestión ganadera</h1>
+      </div>
       <button type="button" id="btn-toggle-rangos" class="toggle-rangos" aria-expanded="false">Rangos</button>
+      <div class="session-actions">
+        <span id="session-user"></span>
+        <span id="session-role" class="role-badge"></span>
+        <button type="button" id="btn-logout" class="secondary">Salir</button>
+      </div>
     </header>
 
-    <section class="card">
+    <section id="registro-panel" class="card">
       <h2>Registrar Vaca</h2>
       <form id="form-registro">
         <label>Código:
@@ -31,6 +61,9 @@
             <option value="Hembra">Hembra</option>
           </select>
         </label>
+        <label>Raza:
+          <select id="razaSelect" required></select>
+        </label>
         <div class="actions">
           <button type="submit">Registrar</button>
           <button type="button" id="btn-reset">Reset</button>
@@ -39,8 +72,18 @@
     </section>
 
     <section id="rangos-panel" class="card hidden">
-      <h2>Rangos Brahman</h2>
-      <p class="section-note">Valores oficiales por edad, sexo y peso.</p>
+      <div class="section-heading">
+        <div>
+          <h2>Rangos por raza</h2>
+          <p class="section-note">Valores oficiales por edad, sexo y peso.</p>
+        </div>
+      </div>
+      <div id="razas-admin" class="admin-tools hidden">
+        <form id="form-raza" class="inline-form">
+          <label>Nueva raza <input id="nueva-raza" maxlength="40" placeholder="Ej. Angus"></label>
+          <button type="submit">Agregar raza</button>
+        </form>
+      </div>
       <div id="razasList"></div>
     </section>
 
@@ -53,6 +96,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=9"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

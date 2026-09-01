@@ -414,3 +414,137 @@ small {
     padding: 8px;
   }
 }
+
+.topbar h1 {
+  padding: 0;
+  color: var(--verde-oscuro);
+  box-shadow: none;
+}
+
+body > .auth-screen {
+  min-height: calc(100vh - 40px);
+  margin: 0;
+  padding: 24px 0;
+  background: radial-gradient(circle at 15% 10%, #d9efd8, transparent 36%), linear-gradient(135deg, #f3f7f3, #e7f0e8);
+}
+
+.auth-screen.hidden {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .auth-card {
+    padding: 24px 18px;
+  }
+
+  .topbar,
+  .section-heading,
+  .breed-heading {
+    align-items: flex-start;
+  }
+
+  .session-actions {
+    justify-content: flex-start;
+  }
+
+  .inline-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+.auth-screen {
+  min-height: calc(100vh - 40px);
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 24px 0;
+  background: radial-gradient(circle at 15% 10%, #d9efd8, transparent 36%), linear-gradient(135deg, #f3f7f3, #e7f0e8);
+}
+
+.auth-card {
+  width: min(100%, 440px);
+  padding: 34px;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  box-shadow: 0 18px 45px #1b5e2020;
+}
+
+.auth-card h1 {
+  padding: 0;
+  margin: 0 0 8px;
+  color: var(--verde-oscuro);
+  box-shadow: none;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--verde);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.auth-copy,
+.section-note {
+  color: #607d8b;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin: 24px 0;
+  padding: 4px;
+  background: #edf4ed;
+  border-radius: 8px;
+}
+
+.auth-tab {
+  background: transparent;
+  color: var(--texto);
+}
+
+.auth-tab.active {
+  background: var(--verde);
+  color: white;
+}
+
+.form-message {
+  min-height: 20px;
+  margin: 12px 0 0;
+  color: var(--rojo);
+}
+
+.session-actions,
+.section-heading,
+.breed-heading,
+.inline-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.session-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.role-badge {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #e3f2fd;
+  color: #1565c0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.secondary { background: #607d8b; }
+.section-heading,
+.breed-heading { justify-content: space-between; }
+.inline-form { align-items: end; }
+.inline-form label { flex: 1; }
+.admin-tools { margin-bottom: 18px; }
