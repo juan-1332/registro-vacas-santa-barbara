@@ -35,6 +35,8 @@
   const btnReset = document.getElementById('btn-reset');
 
   const razasList = document.getElementById('razasList');
+  const btnToggleRangos = document.getElementById('btn-toggle-rangos');
+  const rangosPanel = document.getElementById('rangos-panel');
 
   const vacasList = document.getElementById('vacasList');
   const buscarCodigo = document.getElementById('buscarCodigo');
@@ -47,7 +49,22 @@
       vacas = JSON.parse(rawVacas);
       if(vacas.length) nextId = Math.max(...vacas.map(v=>v.id))+1;
     }
-    razas = { [RAZA_BRAHMAN]: crearRangosBrahman() };
+
+    const rangosDefault = { [RAZA_BRAHMAN]: crearRangosBrahman() };
+    if(rawRazas){
+      try {
+        const parsed = JSON.parse(rawRazas);
+        if(parsed && parsed[RAZA_BRAHMAN] && parsed[RAZA_BRAHMAN].Macho && parsed[RAZA_BRAHMAN].Hembra){
+          razas = parsed;
+        } else {
+          razas = rangosDefault;
+        }
+      } catch (error) {
+        razas = rangosDefault;
+      }
+    } else {
+      razas = rangosDefault;
+    }
     saveRazas();
 
     // migrar vacas antiguas que tengan 'nombre' en lugar de 'codigo'
@@ -222,6 +239,11 @@
   btnReset.addEventListener('click', ()=>{ formRegistro.reset(); });
   buscarCodigo.addEventListener('input', renderVacas);
 
+  btnToggleRangos.addEventListener('click', () => {
+    const isHidden = rangosPanel.classList.toggle('hidden');
+    btnToggleRangos.textContent = isHidden ? 'Rangos' : 'Cerrar rangos';
+    btnToggleRangos.setAttribute('aria-expanded', String(!isHidden));
+  });
 
   // Inicializar
   load();

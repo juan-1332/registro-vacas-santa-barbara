@@ -21,6 +21,23 @@ body {
   font-family: "Segoe UI", Arial, sans-serif;
 }
 
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.topbar h1 {
+  margin: 0;
+}
+
+.toggle-rangos {
+  background: var(--azul);
+  min-width: 120px;
+}
+
 main,
 body > div {
   width: 100%;

@@ -8,7 +8,10 @@
 </head>
 <body>
   <main>
-    <h1>Registro de Vacas</h1>
+    <header class="topbar">
+      <h1>Registro de Vacas</h1>
+      <button type="button" id="btn-toggle-rangos" class="toggle-rangos" aria-expanded="false">Rangos</button>
+    </header>
 
     <section class="card">
       <h2>Registrar Vaca</h2>
@@ -35,9 +38,9 @@
       </form>
     </section>
 
-    <section class="card">
+    <section id="rangos-panel" class="card hidden">
       <h2>Rangos Brahman</h2>
-        <p class="section-note">Valores oficiales por edad, sexo y peso.</p>
+      <p class="section-note">Valores oficiales por edad, sexo y peso.</p>
       <div id="razasList"></div>
     </section>
 
