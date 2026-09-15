@@ -20,6 +20,8 @@ button.danger { background: var(--rojo); }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .actions button { flex: 1 1 130px; }
 .search-field { max-width: 360px; margin-bottom: 14px; }
+.range-editor { margin: 18px 0; padding: 18px; background: #f7fbf7; border: 1px solid var(--borde); border-radius: 10px; }
+.range-editor form { margin-top: 14px; }
 #razasList, #vacasList { max-width: 100%; overflow: hidden; }
 table { width: 100%; table-layout: fixed; margin-top: 12px; border-collapse: collapse; }
 th { padding: 10px; background: var(--verde); color: white; text-align: left; overflow-wrap: anywhere; }

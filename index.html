@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Registro de bovinos | Santa Bárbara</title>
-  <link rel="stylesheet" href="styles.css?v=ranges-1">
+  <link rel="stylesheet" href="styles.css?v=ranges-editor-1">
 </head>
 <body>
   <main>
@@ -43,6 +43,41 @@
         <button type="button" id="btn-toggle-rangos" aria-expanded="false">Abrir rangos</button>
       </div>
       <div id="rangosPanel" class="hidden">
+        <div id="rangoEditor" class="range-editor hidden">
+          <div class="section-heading">
+            <div>
+              <h3 id="rangoEditorTitulo">Nuevo rango</h3>
+              <p>Define el intervalo de edad y los pesos en kilogramos.</p>
+            </div>
+          </div>
+          <form id="form-rango">
+            <label>Sexo
+              <select id="rangoSexo" required>
+                <option value="Macho">Macho</option>
+                <option value="Hembra">Hembra</option>
+              </select>
+            </label>
+            <label>Edad desde (meses)
+              <input type="number" id="rangoEdadMin" min="0" step="1" required>
+            </label>
+            <label>Edad hasta (meses)
+              <input type="number" id="rangoEdadMax" min="0" step="1" required>
+            </label>
+            <label>Peso mínimo (kg)
+              <input type="number" id="rangoPesoMin" min="0" step="0.1" required>
+            </label>
+            <label>Peso promedio (kg)
+              <input type="number" id="rangoPesoPromedio" min="0" step="0.1" required>
+            </label>
+            <label>Peso máximo (kg)
+              <input type="number" id="rangoPesoMax" min="0" step="0.1" required>
+            </label>
+            <div class="actions">
+              <button type="submit">Guardar rango</button>
+              <button type="button" id="btn-cancelar-rango" class="secondary">Cancelar</button>
+            </div>
+          </form>
+        </div>
         <div id="razasList"></div>
       </div>
     </section>
@@ -54,6 +89,6 @@
       <div id="vacasList"></div>
     </section>
   </main>
-  <script src="app.js?v=classification-final-6"></script>
+  <script src="app.js?v=ranges-editor-1"></script>
 </body>
 </html>

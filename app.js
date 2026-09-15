@@ -18,6 +18,10 @@
   const buscar = $('buscarCodigo');
   const rangosPanel = $('rangosPanel');
   const btnToggleRangos = $('btn-toggle-rangos');
+  const formRango = $('form-rango');
+  const rangoEditor = $('rangoEditor');
+  const rangoEditorTitulo = $('rangoEditorTitulo');
+  let rangoEditando = null;
 
   function crearId(){
     return typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
@@ -99,30 +103,73 @@
       tabla.appendChild(cuerpo);
       rangos.appendChild(tabla);
     });
+    const nuevo = document.createElement('button');
+    nuevo.type = 'button';
+    nuevo.textContent = 'Crear nuevo rango';
+    nuevo.addEventListener('click', () => abrirEditorRango());
+    rangos.appendChild(nuevo);
   }
 
-  function editarRango(sexo, index){
-    const rango = rangosBrahman[sexo][index];
-    const minEdad = prompt('Edad mínima (meses):', rango.minEdad);
-    if(minEdad === null) return;
-    const maxEdad = prompt('Edad máxima (meses):', rango.maxEdad);
-    if(maxEdad === null) return;
-    const max = prompt('Peso máximo (kg):', rango.max ?? '');
-    if(max === null) return;
-    const promedio = prompt('Peso promedio (kg):', rango.promedio ?? '');
-    if(promedio === null) return;
-    const min = prompt('Peso mínimo (kg):', rango.min ?? '');
-    if(min === null) return;
-    const valores = [minEdad, maxEdad, max, promedio, min].map(Number);
-    if(valores.some(valor => !Number.isFinite(valor) || valor < 0) || valores[0] > valores[1] || valores[2] < valores[3] || valores[3] < valores[4]){
+  function abrirEditorRango(sexo = 'Macho', index = null){
+    rangoEditando = index === null ? null : { sexo, index };
+    const rango = index === null ? { minEdad: '', maxEdad: '', min: '', promedio: '', max: '' } : rangosBrahman[sexo][index];
+    rangoEditorTitulo.textContent = index === null ? 'Nuevo rango' : `Editar rango de ${sexo}`;
+    $('rangoSexo').value = sexo;
+    $('rangoEdadMin').value = rango.minEdad;
+    $('rangoEdadMax').value = rango.maxEdad;
+    $('rangoPesoMin').value = rango.min ?? '';
+    $('rangoPesoPromedio').value = rango.promedio ?? '';
+    $('rangoPesoMax').value = rango.max ?? '';
+    rangoEditor.classList.remove('hidden');
+    rangos.classList.add('hidden');
+    rangoEditor.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    $('rangoEdadMin').focus();
+  }
+
+  function cerrarEditorRango(){
+    rangoEditando = null;
+    rangoEditor.classList.add('hidden');
+    rangos.classList.remove('hidden');
+    formRango.reset();
+  }
+
+  function rangosQueSeSolapan(sexo, minEdad, maxEdad){
+    return (rangosBrahman[sexo] || []).filter((rango, index) => {
+      if(rangoEditando && rangoEditando.sexo === sexo && rangoEditando.index === index) return false;
+      return minEdad < rango.maxEdad && maxEdad > rango.minEdad;
+    });
+  }
+
+  function guardarRangoDesdeFormulario(event){
+    event.preventDefault();
+    if(!formRango.reportValidity()) return;
+    const sexo = $('rangoSexo').value;
+    const rangoAnterior = rangoEditando ? rangosBrahman[rangoEditando.sexo][rangoEditando.index] : null;
+    const valores = ['rangoEdadMin', 'rangoEdadMax', 'rangoPesoMin', 'rangoPesoPromedio', 'rangoPesoMax'].map(id => Number($(id).value));
+    const [minEdad, maxEdad, min, promedio, max] = valores;
+    if(valores.some(valor => !Number.isFinite(valor) || valor < 0) || minEdad >= maxEdad || min > promedio || promedio > max){
       alert('El rango ingresado no es válido. Revise edades y pesos.');
       return;
     }
-    rangosBrahman[sexo][index] = { minEdad: valores[0], maxEdad: valores[1], max: valores[2], promedio: valores[3], min: valores[4] };
+    const ocupados = rangosQueSeSolapan(sexo, minEdad, maxEdad);
+    if(ocupados.length){
+      const descripcion = ocupados.map(rango => `${rango.minEdad} a ${rango.maxEdad} meses`).join(', ');
+      if(!confirm(`Las edades elegidas ya están ocupadas por: ${descripcion}. ¿Deseas reemplazar el rango?`)) return;
+      rangosBrahman[sexo] = rangosBrahman[sexo].filter(rango => !ocupados.includes(rango));
+    }
+    const nuevoRango = { minEdad, maxEdad, min, promedio, max };
+    if(rangoAnterior){
+      rangosBrahman[rangoEditando.sexo] = rangosBrahman[rangoEditando.sexo].filter(rango => rango !== rangoAnterior);
+    }
+    rangosBrahman[sexo].push(nuevoRango);
+    rangosBrahman[sexo].sort((a, b) => a.minEdad - b.minEdad);
     guardarRangos();
+    cerrarEditorRango();
     mostrarRangos();
     mostrarBovinos();
   }
+
+  function editarRango(sexo, index){ abrirEditorRango(sexo, index); }
 
   function eliminarRango(sexo, index){
     const rango = rangosBrahman[sexo][index];
@@ -184,6 +231,8 @@
   });
 
   $('btn-reset').addEventListener('click', () => form.reset());
+  formRango.addEventListener('submit', guardarRangoDesdeFormulario);
+  $('btn-cancelar-rango').addEventListener('click', cerrarEditorRango);
   buscar.addEventListener('input', mostrarBovinos);
   btnToggleRangos.addEventListener('click', () => {
     const cerrado = rangosPanel.classList.toggle('hidden');
