@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Registro de bovinos | Santa Bárbara</title>
-  <link rel="stylesheet" href="styles.css?v=ranges-editor-1">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="styles.css?v=accessible-sync-1">
 </head>
 <body>
   <main>
@@ -40,7 +41,7 @@
           <h2>Rangos Brahman</h2>
           <p>Consulta, edita o elimina los rangos por sexo.</p>
         </div>
-        <button type="button" id="btn-toggle-rangos" aria-expanded="false">Abrir rangos</button>
+        <button type="button" id="btn-toggle-rangos" aria-controls="rangosPanel" aria-expanded="false">Abrir rangos</button>
       </div>
       <div id="rangosPanel" class="hidden">
         <div id="rangoEditor" class="range-editor hidden">
@@ -78,7 +79,7 @@
             </div>
           </form>
         </div>
-        <div id="razasList"></div>
+        <div id="razasList" aria-live="polite"></div>
       </div>
     </section>
     <section class="card">
@@ -86,7 +87,8 @@
       <label class="search-field">Buscar por código
         <input type="search" id="buscarCodigo" placeholder="Código del bovino">
       </label>
-      <div id="vacasList"></div>
+      <p id="estadoConexion" class="status" role="status" aria-live="polite"></p>
+      <div id="vacasList" aria-live="polite" aria-busy="false"></div>
     </section>
   </main>
   <script src="app.js?v=ranges-editor-1"></script>
