@@ -275,16 +275,26 @@
     const nuevo = prompt('Nuevo peso (kg):', bovino.peso);
     if(nuevo === null) return;
     if(!Number.isFinite(Number(nuevo)) || Number(nuevo) <= 0){ alert('Ingrese un peso válido mayor que 0 kg.'); return; }
-    const { error } = await clienteSupabase.from('bovinos').update({ peso: Number(nuevo) }).eq('id', bovino.id);
-    if(error){ alert(`No se pudo actualizar el peso: ${error.message}`); return; }
-    bovino.peso = Number(nuevo); guardar(); mostrarBovinos();
+    try {
+      const { error } = await clienteSupabase.from('bovinos').update({ peso: Number(nuevo) }).eq('id', bovino.id);
+      if(error) throw error;
+      bovino.peso = Number(nuevo); guardar(); mostrarBovinos();
+    } catch(error){
+      console.warn('No se pudo actualizar el bovino en Supabase:', error);
+      alert(`No se pudo actualizar el peso: ${error.message || 'Error de conexión.'}`);
+    }
   }
 
   async function eliminarBovino(bovino){
     if(!confirm(`¿Eliminar el bovino ${bovino.codigo}?`)) return;
-    const { error } = await clienteSupabase.from('bovinos').delete().eq('id', bovino.id);
-    if(error){ alert(`No se pudo eliminar el bovino: ${error.message}`); return; }
-    bovinos = bovinos.filter(item => item.id !== bovino.id); guardar(); mostrarBovinos();
+    try {
+      const { error } = await clienteSupabase.from('bovinos').delete().eq('id', bovino.id);
+      if(error) throw error;
+      bovinos = bovinos.filter(item => item.id !== bovino.id); guardar(); mostrarBovinos();
+    } catch(error){
+      console.warn('No se pudo eliminar el bovino en Supabase:', error);
+      alert(`No se pudo eliminar el bovino: ${error.message || 'Error de conexión.'}`);
+    }
   }
 
   form.addEventListener('submit', async event => {
@@ -298,29 +308,31 @@
     if(!codigo || !fecha || !sexo){ alert('Complete todos los campos requeridos.'); return; }
     if(!Number.isFinite(peso) || peso <= 0){ alert('El peso debe ser mayor que 0 kg.'); return; }
     if(Number.isNaN(fechaNacimiento.getTime()) || fechaNacimiento > new Date()){ alert('La fecha de nacimiento no puede ser futura.'); return; }
-    const { data, error } = await clienteSupabase.from('bovinos').insert({
-      codigo,
-      fecha_nacimiento: fecha,
-      peso,
-      sexo
-    }).select().single();
-    if(error){
-      alert(`No se pudo guardar el bovino: ${error.message}`);
-      return;
+    try {
+      const { data, error } = await clienteSupabase.from('bovinos').insert({
+        codigo,
+        fecha_nacimiento: fecha,
+        peso,
+        sexo
+      }).select().single();
+      if(error || !data) throw error || new Error('Respuesta inválida de Supabase');
+      const bovino = {
+        id: data.id,
+        codigo: data.codigo,
+        fechaNacimiento: data.fecha_nacimiento,
+        peso: Number(data.peso),
+        sexo: data.sexo || sexo
+      };
+      bovinos.push(bovino);
+      guardar();
+      form.reset();
+      buscar.value = '';
+      mostrarBovinos();
+      alert('Bovino guardado correctamente.');
+    } catch(error){
+      console.warn('No se pudo guardar el bovino en Supabase:', error);
+      alert(`No se pudo guardar el bovino: ${error.message || 'Error de conexión.'}`);
     }
-    const bovino = {
-      id: data.id,
-      codigo: data.codigo,
-      fechaNacimiento: data.fecha_nacimiento,
-      peso: Number(data.peso),
-      sexo: data.sexo || sexo
-    };
-    bovinos.push(bovino);
-    guardar();
-    form.reset();
-    buscar.value = '';
-    mostrarBovinos();
-    alert('Bovino guardado correctamente.');
   });
 
   $('btn-reset').addEventListener('click', () => form.reset());
