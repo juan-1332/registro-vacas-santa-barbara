@@ -4,7 +4,7 @@
   const LS_RANGOS = 'rangos_brahman_local_v1';
   const RAZA = 'Brahman';
   const SUPABASE_URL = 'https://pphnbmdbodwkjcbrynl.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwaG5ibWRib2R3a2pqY2JyeW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1MjE4OTYsImV4cCI6MjEwNTA5Nzg5Nn0.shcx3_fRWQ5BPqoBRubaZU01TW4nNzlgYYNYnF4TQKA';
+  const SUPABASE_ANON_KEY = '..shcx3_fRWQ5BPqoBRubaZU01TW4nNzlgYYNYnF4TQKA';
   const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const EDADES = [[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],[15,16],[16,17],[17,18],[18,20],[20,22],[22,24],[24,27],[27,30],[30,33],[33,36],[36,40],[40,44],[44,48]];
   const PESOS = {
